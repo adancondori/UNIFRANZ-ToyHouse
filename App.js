@@ -1,117 +1,89 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
+import React, { useState } from 'react';
+import { StyleSheet, View, FlatList, Alert, TouchableWithoutFeedback, Keyboard,TouchableOpacity, Text } from 'react-native';
 
-import React from 'react';
-import type {Node} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+import Header from './src/components/header';
+import ItemToy from './src/components/item_toy';
+import AddToy from './src/list_toy/addToy'
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+export default function App() {
+    const [todos, setTodos] = useState([
+      { text: 'Toy car ', key: '1' },
+      { text: 'horse toy', key: '2' },
+      { text: 'children table', key: '3' },
+      { text: 'mini laptop toy', key: '4' },
 
-/* $FlowFixMe[missing-local-annot] The type annotation(s) required by Flow's
- * LTI update could not be added via codemod */
-const Section = ({children, title}): Node => {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-};
+    ]);
+  
+    const pressHandler = (key) => {
+      setTodos(prevTodos => {
+        return prevTodos.filter(todo => todo.key != key);
+      });
+    };
+  
+    const submitHandler = (text) => {
+      if(text.length > 3){
+        setTodos(prevTodos => {
+          return [
+            { text, key: Math.random().toString() },
+            ...prevTodos
+          ];
+        });
+      } else {
+        Alert.alert('OOPS', 'Todo must be over 3 characters long', [
+          {text: 'Understood', onPress: () => console.log('alert closed') }
+        ]);
+      }
+    };
+  
+    return (
+      <View style={styles.container}>
+        <Header></Header>
+        <View style={styles.content}> 
+            <Text style={styles.comment}>Listado de juguetes</Text>
 
-const App: () => Node = () => {
-  const isDarkMode = useColorScheme() === 'dark';
+            <AddToy submitHandler={submitHandler} ></AddToy>
+            <View style={styles.list}> 
+                <FlatList
+                data={todos}
+                renderItem={({ item }) => (
+                    <ItemToy item={item} pressHandler={pressHandler}></ItemToy>
+                )}
+                />
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.js</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
+            </View>
+            
         </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
-};
+      </View>
+    );
+  }
+  
 
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
-
-export default App;
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: '#fff',
+    },
+    content: {
+      padding: 40,
+    },
+    list: {
+      marginTop: 20,
+      backgroundColor: '#fff',
+    },
+      comment: {
+        textAlign: 'left',
+        color: '#000',
+        fontSize: 20,
+        fontWeight: 'bold',
+      },
+      item: {
+        padding: 16,
+        marginTop: 16,
+        borderColor: '#bbb',
+        borderWidth: 1,
+        borderStyle: "dashed",
+        borderRadius: 1,
+        borderRadius: 10,
+      }
+  });
+  
